@@ -1,4 +1,6 @@
 # models
+BAT is smaller than PaSST (faster training)
+PaSST might achieve higher accuracy than BAT
 
 ## Bioacoustic Transformer (BAT)
 https://github.com/FrankFundel/BAT
