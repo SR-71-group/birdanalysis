@@ -62,6 +62,6 @@ for filename in os.listdir(input_directory):
         input_file_path = os.path.join(input_directory, filename)
         start_ms, end_ms = parse_filename(filename)
         processed_and_cut_audio = processor.process_and_cut_audio(input_file_path, volume_factor=5.0, start_ms=start_ms, end_ms=end_ms)
-        cut_file_path = os.path.join(output_directory, f"cut_{filename}")
+        cut_file_path = os.path.join(output_directory, f"{filename}")
         processed_and_cut_audio.export(cut_file_path, format="wav")
         print(f"Processed and cut {filename} -> Saved as {cut_file_path}")
