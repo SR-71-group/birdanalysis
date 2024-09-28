@@ -290,7 +290,7 @@ def filename_to_annotations(filename):
     return annotations
 
 def append_rows_tocsv(csv_filepath):
-    title = ["filename", "juliandate", "loc", "low_freq", "high_freq", "start", "end", "species", "species_eng", "species_ger"]
+    title = ["filename", "juliandate", "loc", "low_freq", "high_freq", "start", "end", "species_code", "species"]
     audio_filepaths = [file for file in os.listdir("data/dataset/Audiodateien") if file.endswith('.wav')]
     with open(csv_filepath, "w", newline="") as annotations_file:
         wr = csv.writer(annotations_file)
@@ -322,9 +322,9 @@ if __name__ == "__main__":
 
     # Try reading the CSV file with a different encoding
     try:
-        df = pd.read_csv("data/annotations.csv", encoding='utf-8')
+        df = pd.read_csv("data/annotations.csv", encoding='utf-8', on_bad_lines='skip')
     except UnicodeDecodeError:
-        df = pd.read_csv("data/annotations.csv", encoding='latin1')
+        df = pd.read_csv("data/annotations.csv", encoding='latin1', on_bad_lines='skip')
 
     df = df.map(replace_umlauts)
     
