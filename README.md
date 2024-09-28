@@ -1,7 +1,12 @@
-# birdanalysis
-science-camp-project for migration birds calls 
+# models
 
+## Bioacoustic Transformer (BAT)
+https://github.com/FrankFundel/BAT
+-> pretrained on bats, but transferlearning on our dataset may be an option
 
-WORKING RULES
+## Patchout faSt Spectrogram Transformer (PaSST)
+https://github.com/kkoutini/PaSST
+-> pretrained on ESC-50 (dataset for environmental sound classification)
 
-if you have some result you want to share, switch to your branch and upload it with a comment why you uploading it ( f.e. fixing error or added ___ function)
+# algorithms for over- and undersampling
+https://github.com/manuel-rdz/multilabel-dataset-resampling-algorithms
