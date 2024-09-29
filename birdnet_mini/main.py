@@ -1,13 +1,13 @@
-from audio import process_folder, create_spectrogram
+from audio import process_folder, create_spectrogram, plot_signal
 
 
 def main():
     
     
 # Different paths to different files
-    folder_path = '/media/sarkar/New Volume/material_Bird Fly monitoring and analyse/2n_data material/Audiodateien'
-    #target_length = 5*48000
-    save_path = '/media/sarkar/New Volume/material_Bird Fly monitoring and analyse/sci_camp/birdnet_mini/data/preprocessed'
+    folder_path = '/home/sarkar/Desktop/sci_camp/birdnet_mini/real_data'
+    target_length = 150*48000
+    save_path = '/home/sarkar/Desktop/sci_camp/birdnet_mini/data/preprocessed'
     
         # Uncomment below processdata and target_length if required to use the zero padding and comment out the another processdata.
     #processdata = process_folder(folder_path=folder_path, start_cut=0.0, end_cut=0.0, target_length=target_length)
