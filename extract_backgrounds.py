@@ -1,4 +1,4 @@
-# main.py
+# extract_backgrounds.py
 import os
 from pathlib import Path
 from audio_parser import parse_filename
