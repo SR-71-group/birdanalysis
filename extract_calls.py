@@ -1,11 +1,11 @@
 # bird_call_extractor.py
 import os
 from pathlib import Path
-from audio_parser import parse_filename
-from audio_processing import load_audio, cut_bird_call
-from file_saver import save_audio
-from spectrogram_creator import create_spectrogram
-from spectrogram_padding import process_and_pad_spectrograms
+from audiofiles_manipulation.audio_parser import parse_filename
+from audiofiles_manipulation.audio_processing import load_audio, cut_bird_call
+from audiofiles_manipulation.file_saver import save_audio
+from spectrograms.spectrogram_creator import create_spectrogram
+from spectrograms.spectrogram_padding import process_and_pad_spectrograms
 
 # Get the root directory where the script is being executed
 ROOT_DIR = Path(__file__).resolve().parent  # Get the current script directory

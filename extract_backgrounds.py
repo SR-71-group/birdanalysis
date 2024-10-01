@@ -1,12 +1,12 @@
 # extract_backgrounds.py
 import os
 from pathlib import Path
-from audio_parser import parse_filename
-from audio_processing import load_audio, cut_bird_call, create_background_noise
-from file_saver import save_audio, generate_background_filename
-from backgrounds_selection import filter_longest_files, delete_unselected_files
-from spectrogram_creator import create_spectrogram  # Import the spectrogram creator
-from spectrogram_padding import process_and_pad_spectrograms  # Import padding logic
+from audiofiles_manipulation.audio_parser import parse_filename
+from audiofiles_manipulation.audio_processing import load_audio, cut_bird_call, create_background_noise
+from audiofiles_manipulation.file_saver import generate_background_filename, save_audio
+from audiofiles_manipulation.backgrounds_selection import filter_longest_files
+from spectrograms.spectrogram_creator import create_spectrogram  # Import the spectrogram creator
+from spectrograms.spectrogram_padding import process_and_pad_spectrograms  # Import padding logic
 
 # Get the root directory where the script is being executed
 ROOT_DIR = Path(__file__).resolve().parent  # Get the current script directory
