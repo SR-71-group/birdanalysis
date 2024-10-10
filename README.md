@@ -1,7 +1,10 @@
 # birdanalysis
-science-camp-project for migration birds calls 
+The repository consists of two pythong files. 
+  audio.py
+  main.py
 
+main.py calls the functions from the audio.py file.
 
-WORKING RULES
+audio.py file has 4 functions: open_audio_file, process_folder, create_spectrogram, and plot_signal. 
 
-if you have some result you want to share, switch to your branch and upload it with a comment why you uploading it ( f.e. fixing error or added ___ function)
+The example output can be found in the form of image (base_filename.png). Then the function saves the image in the form of NumPy array for post-processing. 
