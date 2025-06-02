@@ -8,8 +8,8 @@
 
 ### BirdNet usage
  🔻birdnet used  with oversampling, lots of classes misclassified, general results - could detect few bird species
- ![img_3.png](report_assets/img_3.png)
-> oversampling , final dataset apx 19000 (means that most likely it has same samples in train and test datasets)
+ 
+> oversampling , final dataset apx 12000 (means that most likely it has same samples in train and test datasets)
 
 ![img_4.png](report_assets/img_4.png)
 ### YamNet, ResNet usage
@@ -32,7 +32,9 @@ according to some reaserches this model was efficient on similar tasks with shor
 - required small batch sizes, which made training unstable or slow.
 
 Oversampling helped but often led to overfitting.
-Without it, models failed to learn well.
+![img_3.png](report_assets/img_3.png)
+
+Without such oversampling, models failed to learn well.
 with less or without oversampling -> failed to produce good results
 
 ![img_2.png](report_assets/img_2.png)
@@ -96,6 +98,11 @@ for 30 epochs
 | **Weighted Avg (F1)**     | 0.91     | 0.92        | **0.93** ✅   |
 | **Macro Avg (Recall)**    | 0.90     | **0.89** 🔻 | **0.90** 🔼  |
 | **Weighted Avg (Recall)** | 0.91     | 0.92        | **0.93** ✅   |
+
+
+### Detailed classification report
+![img.png](report_assets/class_report.png)
+
 
 
 ### Conclusions:
