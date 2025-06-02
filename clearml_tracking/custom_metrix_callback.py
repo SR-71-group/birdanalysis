@@ -1,36 +1,46 @@
-import numpy as np
+from tensorflow.python.keras.callbacks import Callback
 from sklearn.metrics import confusion_matrix, classification_report
-from tensorflow.keras.callbacks import Callback
-from clearml import Task
+import numpy as np
+from clearml import Task, Logger
 
 class CustomMetricsCallback(Callback):
-    def __init__(self, species_map):
+    def __init__(self, species_map, validation_data=None):
         super(CustomMetricsCallback, self).__init__()
         self.species_map = species_map
-        self.clearml_logger = Task.current_task().get_logger()
+        self.validation_data = validation_data  # Store validation data for metrics
+        self.logger = Task.current_task().get_logger()
 
     def on_epoch_end(self, epoch, logs=None):
-        val_data = self.validation_data[0]
-        val_labels = np.argmax(self.validation_data[1], axis=1)  # Convert one-hot to integer labels
-        predictions = np.argmax(self.model.predict(val_data), axis=1)
+        # Log accuracy and loss for training and validation
+        self.logger.report_scalar("Accuracy", "Train", iteration=epoch, value=logs["accuracy"])
+        self.logger.report_scalar("Loss", "Train", iteration=epoch, value=logs["loss"])
+        self.logger.report_scalar("Accuracy", "Validation", iteration=epoch, value=logs["val_accuracy"])
+        self.logger.report_scalar("Loss", "Validation", iteration=epoch, value=logs["val_loss"])
 
-        # Confusion matrix
-        cm = confusion_matrix(val_labels, predictions)
+        # Log confusion matrix and per-species accuracy for validation
+        if self.validation_data:
+            val_data, val_labels = self.validation_data
+            val_labels = np.argmax(val_labels, axis=1)  # Convert one-hot labels to integers
+            predictions = np.argmax(self.model.predict(val_data), axis=1)
 
-        # Calculate per-species accuracy
-        per_species_accuracy = cm.diagonal() / cm.sum(axis=1)
+            cm = confusion_matrix(val_labels, predictions)
+            per_species_accuracy = cm.diagonal() / cm.sum(axis=1)
 
-        # Log per-species accuracy in ClearML
-        for idx, species in enumerate(self.species_map.keys()):
-            accuracy = per_species_accuracy[idx]
-            print(f"Epoch {epoch + 1} - {species} accuracy: {accuracy}")
-            self.clearml_logger.report_scalar(title='Per-Species Accuracy', series=species, value=accuracy, iteration=epoch + 1)
+            # Log per-species accuracy
+            for idx, species in enumerate(self.species_map.keys()):
+                self.logger.report_scalar(
+                    title="Per-Species Accuracy",
+                    series=species,
+                    value=per_species_accuracy[idx],
+                    iteration=epoch
+                )
 
-        # Log the confusion matrix for the current epoch
-        self.clearml_logger.report_confusion_matrix(
-            title='Confusion Matrix',
-            matrix=cm.tolist(),
-            iteration=epoch + 1,
-            xlabels=list(self.species_map.keys()),
-            ylabels=list(self.species_map.keys())
-        )
+            # Log confusion matrix
+            self.logger.report_confusion_matrix(
+                title="Confusion Matrix",
+                series="Validation",
+                iteration=epoch,
+                matrix=cm.tolist(),
+                xlabels=list(self.species_map.keys()),
+                ylabels=list(self.species_map.keys())
+            )

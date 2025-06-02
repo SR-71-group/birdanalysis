@@ -1,58 +1,45 @@
+from clearml import Task
+from pathlib import Path
+import os
+
 from load_data import load_data
 from train_model import train_lstm_model
-from pathlib import Path
+import tensorflow as tf
 
 def main():
-    # Get the root directory where the script is being executed
-    root_dir = Path(__file__).resolve().parent.parent  # Navigate up two levels to the project root
-    train_csv_filename = root_dir / 'data' / 'metadata' / 'annotations_train_resampled.csv'  # Correctly construct path
-    test_csv_filename = root_dir / 'data' / 'metadata' / 'annotations_test.csv'  # Ensure the path is correct
-    spectrogram_dir = root_dir / 'data' / 'spectrograms'  # Relative path to the spectrograms
+    task = Task.init(
+        project_name="Bird Call Detection",
+        task_name="LSTM on Spectrograms",
 
-    # Debug prints to verify paths
-    print(f"Training CSV path: {train_csv_filename}")
-    print(f"Testing CSV path: {test_csv_filename}")
-    print(f"Spectrogram directory: {spectrogram_dir}")
-
-    # Check if the files exist before loading
-    if not train_csv_filename.exists():
-        print(f"Error: Training CSV not found at {train_csv_filename}")
-        return
-    if not test_csv_filename.exists():
-        print(f"Error: Testing CSV not found at {test_csv_filename}")
-        return
-    if not spectrogram_dir.exists():
-        print(f"Error: Spectrogram directory not found at {spectrogram_dir}")
-        return
-
-    # Load data from CSV files
-    (X_train, y_train, train_species_map), (X_test, y_test, test_species_map) = load_data(
-        train_csv_filename.name,
-        test_csv_filename.name,
-        spectrogram_dir
     )
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
+    # Paths
+    root_dir = Path(__file__).resolve().parent.parent  # Navigate up two levels
+    train_csv = root_dir / 'data' / 'metadata' / 'train_dataset.csv'
+    test_csv = root_dir / 'data' / 'metadata' / 'test_dataset.csv'
+    val_csv = root_dir / 'data' / 'metadata' / 'validation_dataset.csv'
+    spectrogram_dir = root_dir / 'data' / 'mel-spectrograms'
 
-    # Check if all the required spectrogram files exist
-    missing_files = False
-    for i, spectrogram_path in enumerate(X_train):
-        if not Path(spectrogram_path).exists():
-            print(f"Warning: Training spectrogram file does not exist: {spectrogram_path}")
-            missing_files = True
-    for i, spectrogram_path in enumerate(X_test):
-        if not Path(spectrogram_path).exists():
-            print(f"Warning: Testing spectrogram file does not exist: {spectrogram_path}")
-            missing_files = True
+    # Check file existence
+    for path in [train_csv, test_csv, spectrogram_dir]:
+        if not path.exists():
+            print(f"Error: Missing file or directory at {path}")
+            return
 
-    # If any spectrograms are missing, we should abort
-    if missing_files:
-        print("Error: Missing spectrogram files. Please ensure all required files are present.")
-        return
 
-    # Train the model with the loaded data
-    train_lstm_model(X_train, y_train, train_species_map)
+    print("Built with CUDA:", tf.test.is_built_with_cuda())
+    print("Available GPUs:", tf.config.list_physical_devices('GPU'))
+    # Load data
+    datasets = load_data(train_csv, test_csv, val_csv, spectrogram_dir)
 
-    # Optionally evaluate the model on test data
-    # evaluate_model(test_model, X_test, y_test)
+
+    # Train the model
+    model, history, species_map = train_lstm_model(*datasets)
+
+    # Save the trained model in Keras format
+    model_path = root_dir / 'trained_lstm_model.keras'
+    model.save(model_path)
+    task.upload_artifact(name="Trained LSTM Model", artifact_object=model_path)
 
 if __name__ == "__main__":
     main()
